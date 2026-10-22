@@ -9,6 +9,13 @@ export interface SheetConfig {
 }
 
 export function getStoredSheetConfig(): SheetConfig | null {
+  // 1. .env 파일의 NEXT_PUBLIC_GOOGLE_SCRIPT_URL 최우선 적용
+  const envUrl = process.env.NEXT_PUBLIC_GOOGLE_SCRIPT_URL;
+  if (envUrl) {
+    return { scriptUrl: envUrl };
+  }
+
+  // 2. localStorage 사용자 수동 설정 fallback
   if (typeof window === 'undefined') return null;
   const raw = localStorage.getItem(SHEET_CONFIG_KEY);
   if (raw) {
@@ -18,12 +25,6 @@ export function getStoredSheetConfig(): SheetConfig | null {
     } catch {
       // ignore
     }
-  }
-
-  // .env 파일의 NEXT_PUBLIC_GOOGLE_SCRIPT_URL 환경변수 자동 적용
-  const envUrl = process.env.NEXT_PUBLIC_GOOGLE_SCRIPT_URL;
-  if (envUrl) {
-    return { scriptUrl: envUrl };
   }
 
   return null;
